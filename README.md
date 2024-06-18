@@ -1,2 +1,2 @@
-# Automatition
+# Automation
 Курс по Python
