@@ -1,5 +1,5 @@
-def print_letter(num):
-    print(num, end = '')
+def print_letter (num):
+    print (num, end= '')
 print_letter(8)
 print_letter(8)
 print_letter(0)
