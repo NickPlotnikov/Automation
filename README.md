@@ -82,3 +82,62 @@ print_letter(3)
 print_letter(5)
 print_letter(3)
 print_letter(5)
+
+--3 HW
+# #Типы данных
+# from user import User
+# from card import Card
+
+# Alex = User("Alex")
+
+# Alex.sayName()
+# Alex.setAge(33)
+# Alex.sayAge()
+
+# card = Card("3435 3434 3224 4534", "11/28", "Alex F")
+
+# Alex.addCard(card)
+# Alex.getCard().pay(1000)
+
+
+# _____________________
+
+
+# class Card:
+#     number = '0000 0000 0000 0000'
+#     validDate = '01/99'
+#     holder = 'unknown'
+
+#     def __init__(self, number, date, holder):
+#         self.holder = holder
+#         self.number = number
+#         self.validate = date
+
+#     def pay(self, amount):
+#         print("с карты", self.number, "списали", amount)
+
+
+#_________________________________
+
+# #Пользователь
+# class User:
+#     age = 0
+    
+#     def __init__(self, name):
+#         print("я создался")
+#         self.username = name
+        
+#     def sayName(self):
+#         print("Меня зовут", self.username)
+
+#     def sayAge(self):
+#         print(self.age)
+
+#     def setAge(self, newAge):
+#         self.age = newAge
+    
+#     def addCard(self, card):
+#         self.card = card
+
+#     def getCard(self):
+#         return self.card
