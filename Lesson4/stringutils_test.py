@@ -1,14 +1,20 @@
+import pytest
 from stringutils import StringUtils
 
 stringutils = StringUtils()
 
+# pytest -m positive_test позитивные проверки
+# pytest -m negative_test негативные проверки
+
 # - 01
+@pytest.mark.positive_test
 def test_capital_pozitive():
     stringutils = StringUtils()
     capitalize_text = stringutils.capitalize("skypro")
     print(capitalize_text)
     assert capitalize_text == ("Skypro")
 
+@pytest.mark.negative_test
 def test_capital_negative():
     stringutils = StringUtils()
     capitalize_text = stringutils.capitalize("")
@@ -16,90 +22,106 @@ def test_capital_negative():
     assert capitalize_text == ("Skypro")
 
 # - 02
+@pytest.mark.positive_test
 def test_trim_pozitive():
     trimmed_text = stringutils.trim("   skypro")
     print(trimmed_text)
     assert trimmed_text == ("skypro")
 
+@pytest.mark.negative_test
 def test_trim_negative():
     trimmed_text = stringutils.trim("   s k y p r o")
     print(trimmed_text)
     assert trimmed_text == ("skypro")
 
 # - 03
+@pytest.mark.positive_test
 def test_lst_pozitive():
     list_from_string = stringutils.to_list("a,b,c,d")
     print(list_from_string)
     assert list_from_string == (["a", "b", "c", "d"])
 
+@pytest.mark.negative_test
 def test_lst_negative():
     list_from_string = stringutils.to_list("a ,b ,c ,d ")
     print(list_from_string)
     assert list_from_string == (["a", "b", "c", "d"])
 
 # - 04
+@pytest.mark.positive_test
 def test_cont_pozitive():
     contains_symbol = stringutils.contains("skypro", "s")
     print(contains_symbol)
     assert contains_symbol == True
 
+@pytest.mark.negative_test
 def test_cont_negative():
-    contains_symbol = stringutils.contains("skypro", "s")
+    contains_symbol = stringutils.contains("skypro", "1")
     print(contains_symbol)
     assert contains_symbol == True
 
 # - 05
+@pytest.mark.positive_test
 def test_del_pozitive():
     deleted_symbol_text = stringutils.delete_symbol("skypro", "k")
     print(deleted_symbol_text)
     assert deleted_symbol_text == ("sypro")
 
+@pytest.mark.negative_test
 def test_del_negative():
-    deleted_symbol_text = stringutils.delete_symbol("skypro", "g")
+    deleted_symbol_text = stringutils.delete_symbol("skypro", "")
     print(deleted_symbol_text)
     assert deleted_symbol_text == ("sypro")
 
 # - 06
+@pytest.mark.positive_test
 def test_start_pozitive():
     starts_with_symbol = stringutils.starts_with("skypro", "s")
     print(starts_with_symbol)
     assert starts_with_symbol == True
 
+@pytest.mark.negative_test
 def test_start_negative():
-    starts_with_symbol = stringutils.starts_with("skypro", "h")
+    starts_with_symbol = stringutils.starts_with("skypro", "3")
     print(starts_with_symbol)
     assert starts_with_symbol == True
 
-# - 07 
+# - 07
+@pytest.mark.positive_test
 def test_end_pozitive():
     ends_with_symbol = stringutils.end_with("skypro", "o")
     print(ends_with_symbol)
     assert ends_with_symbol == True
 
+@pytest.mark.negative_test
 def test_end_negative():
     ends_with_symbol = stringutils.end_with("skypro", "1")
     print(ends_with_symbol)
     assert ends_with_symbol == True
 
 # - 08
+@pytest.mark.positive_test
 def test_enty_pozitive():
     is_text_empty = stringutils.is_empty("   ")
     print(is_text_empty)
     assert is_text_empty == True
 
+@pytest.mark.negative_test
 def test_enty_negative():
     is_text_empty = stringutils.is_empty("hello")
     print(is_text_empty)
     assert is_text_empty == True
 
 # - 09
+@pytest.mark.positive_test
 def test_srtin_pozitive():
     string_from_list = stringutils.list_to_string([1, 2, 3, 4])
     print(string_from_list)
     assert string_from_list == ("1, 2, 3, 4")
-    
-def test_srtin_pozitive():
-    string_from_list = stringutils.list_to_string([ 1 , 2 , 3 , 4 ])
+
+@pytest.mark.negative_test   
+def test_srtin_negative():
+    string_from_list = stringutils.list_to_string([])
     print(string_from_list)
     assert string_from_list == ("1, 2, 3, 4")
 
