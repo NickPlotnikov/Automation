@@ -1,0 +1,7 @@
+Локатор логотипа - <a class="bJbfbaJkI" href="/" data-test-id="header-logo"><svg>...</svg><span>Aviasales</span></a>
+Локатор поля Откуда - <input class="input__control" type="text" placeholder="Город или аэропорт вылета">
+Локатор поля Куда - <input class="input__control" type="text" placeholder="Город или аэропорт прилета">
+Локатор поля Когда - <input class="input__control" type="text" placeholder="Дата вылета">
+Локатор поля Обратно - <input class="input__control" type="text" placeholder="Дата возврата">
+Локатор чек-бокса "Открыть Ostrovok.ru в новой вкладке" - <label><input type="checkbox"> Открыть Ostrovok.ru в новой вкладке</label>
+Локатор кнопки Найти билеты - <button class="bJbfbaJkI" type="submit"><span>Найти билеты</span></button>

@@ -1,0 +1,5 @@
+Локатор кнопки Войти - <div data-widget="headerProfile">...</div>
+Локатор кнопки Заказы - <a href="/my/orderlist">...</a>
+Локатор ссылки OZON Job (в футере) - <a href="https://job.ozon.ru/">OZON Job</a>
+Локатор выбора валюты (верхний левый угол страницы) - <div data-widget="currencySelector">...</div>
+Локатор выпадашки Везде (в поисковой строке) - <div role="combobox">...</div>
