@@ -78,27 +78,38 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-@pytest.fixture
-def driver():
+@pytest.fixture(scope="module")
+def browser():
+    # Инициализация драйвера Firefox
     driver = webdriver.Firefox()
     yield driver
     driver.quit()
 
-def test_calculator(driver):
-    # Открываем страницу
-    driver.get("https://bonigarcia.dev/selenium-webdriver-java/slow-calculator.html")
+def test_calculator(browser):
+    # Открытие страницы калькулятора
+    browser.get('https://bonigarcia.dev/selenium-webdriver-java/slow-calculator.html')
 
-    # Вводим значение 45 в поле с локатором #delay
-    delay_input = driver.find_element(By.CSS_SELECTOR, "#delay")
-    delay_input.send_keys("45")
+    # Установка задержки
+    delay_input = browser.find_element(By.XPATH, "//input[@id='delay']")
+    delay_input.clear()
+    delay_input.send_keys('45')
 
-    # Нажимаем на кнопки 7, +, 8, =
-    driver.find_element(By.CSS_SELECTOR, "btn#7").click()
-    driver.find_element(By.CSS_SELECTOR, "btn#+").click()
-    driver.find_element(By.CSS_SELECTOR, "btn#8").click()
-    driver.find_element(By.CSS_SELECTOR, "btn#=").click()
+    # Нажатие на кнопки калькулятора
+    button_7 = browser.find_element(By.XPATH, "/html/body/main/div/div[4]/div/div/div[2]/span[1]")
+    button_plus = browser.find_element(By.XPATH, "/html/body/main/div/div[4]/div/div/div[2]/span[4]")
+    button_8 = browser.find_element(By.XPATH, "/html/body/main/div/div[4]/div/div/div[2]/span[2]")
+    button_equals = browser.find_element(By.XPATH, "/html/body/main/div/div[4]/div/div/div[2]/span[15]")
 
-    # Ждем, пока в окне отобразится результат 15
-    wait = WebDriverWait(driver, 60)
-    result = wait.until(EC.text_to_be_present_in_element((By.CSS_SELECTOR, "#display"), "15"))
-    assert result
+    button_7.click()
+    button_plus.click()
+    button_8.click()
+    button_equals.click()
+
+    # Ожидание результата в течение 50 секунд
+    result = WebDriverWait(browser, 50).until(
+        EC.text_to_be_present_in_element((By.CSS_SELECTOR, '.screen'), '15')
+    )
+
+    # Проверка результата
+    display_value = browser.find_element(By.CSS_SELECTOR, '.screen').text
+    assert display_value == '15', f"Expected result '15', but got '{display_value}'"
