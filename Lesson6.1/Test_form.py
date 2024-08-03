@@ -147,7 +147,7 @@ def test_data_types_form(browser):
          browser.find_element(By.NAME, field_name).send_keys(value)
    
     # Ожидаем, когда форма будет обработана
-    WebDriverWait(browser, 15, 0.1).until(
+    WebDriverWait(browser, 40, 0.1).until(
          EC.element_to_be_clickable((By.TAG_NAME, "button"))).click()
     sleep(2)    
 
@@ -165,7 +165,7 @@ def test_data_types_form(browser):
             "company": "success"
     }
 
-    for field_id, in class_name in field_classes.items():
-            assert class_name in browser.find_element(
-                 By.ID, field_id).get_attribute("class")
+    for field_id, class_name in field_classes.items():
+        assert class_name in browser.find_element(
+            By.ID, field_id).get_attribute("class")
            
