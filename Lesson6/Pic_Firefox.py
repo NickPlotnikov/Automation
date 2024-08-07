@@ -19,14 +19,6 @@ try:
     # Перейти на страницу
     driver.get('https://bonigarcia.dev/selenium-webdriver-java/loading-images.html')
 
-    # # Ожидание появления 4-й картинки или текста "Done"
-    # WebDriverWait(driver, 20).until(
-    #     EC.any_of(
-    #         EC.presence_of_element_located((By.XPATH, "(//img)[4]")),
-    #         EC.presence_of_element_located((By.XPATH, "//p[text()='Done!']"))
-    #     )
-    # )
-
     # Получение значения атрибута src у 3-й картинки
     third_image = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.XPATH, "(//img)[4]"))
