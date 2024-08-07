@@ -1,2 +1,0 @@
-Automation
-Курс по Python
