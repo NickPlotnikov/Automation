@@ -21,7 +21,7 @@ try:
 
     # Получение значения атрибута src у 3-й картинки
     third_image = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.ID, "landscape"))
+        EC.presence_of_element_located((By.XPATH, '//*[@id="award"]'))
     )
     third_image_src = third_image.get_attribute('src')
 
