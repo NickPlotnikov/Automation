@@ -1,4 +1,3 @@
-import pytest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
@@ -22,7 +21,7 @@ try:
 
     # Получение значения атрибута src у 3-й картинки
     third_image = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.XPATH, '//*[@id="award"]'))
+        EC.presence_of_element_located((By.XPATH, "(//img)[4]"))
     )
     third_image_src = third_image.get_attribute('src')
 
