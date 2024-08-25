@@ -65,3 +65,4 @@ class Company:
         my_headers["x-client-token"] = self.get_token()
         resp = requests.patch(f"{self.url}/employee/{id_employee}", headers=my_headers, json=user_info)
         return resp.json()
+    

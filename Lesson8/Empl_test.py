@@ -73,6 +73,26 @@ def test_add_employee_without_token(): # Тестирование создани
     except Exception as e:
         assert str(e) == "Token is required"
 
+# Новые тесты на проверку обязательности полей
+def test_add_employee_without_token():
+    company_id = 1  # предположим, что компания с ID 1 существует
+    employee = {
+        "firstName": "Test",
+        "lastName": "Employee"
+    }
+    response = requests.post(f"https://x-clients-be.onrender.com/employee", json=employee)
+    assert response.status_code == 401  # проверяем, что без токена идет ошибка
+
+def test_add_employee_without_body():
+    my_headers = {}
+    my_headers["x-client-token"] = api.get_token()
+    response = requests.post(f"https://x-clients-be.onrender.com/employee", headers=my_headers)
+    assert response.status_code == 400  # предполагаем, что без тела идет ошибка
+
+def test_get_employee_without_id():
+    response = requests.get(f"https://x-clients-be.onrender.com/employee/")
+    assert response.status_code == 404  # проверяем, что без ID идет ошибка
+
 def test_change_employee_info():
     name = "Nick"
     descr = "test"
