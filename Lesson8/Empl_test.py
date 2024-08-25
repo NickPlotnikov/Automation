@@ -39,6 +39,39 @@ def test_get_employee_by_id():
     assert get_info["firstName"] == "NickPlotnikov"
     assert get_info["lastName"] == "Be"
 
+def test_get_list_employee_without_company_id(): # Тестирование получения списка сотрудников без companyId:
+    try:
+        api.get_list_employee(None)
+    except Exception as e:
+        assert str(e) == "Company ID is required"
+
+def test_get_employee_by_id_without_id(): # Тестирование получения сотрудника без id:
+    try:
+        api.get_employee_by_id(None)
+    except Exception as e:
+        assert str(e) == "Employee ID is required"
+
+def test_add_employee_without_request_body(): # Тестирование создания сотрудника без тела запроса:
+    name = "Nick"
+    descr = "test"
+    company = api.create_company(name, descr)
+    new_id = company["id"]
+    
+    try:
+        api.add_new_employee(new_id, None, None)
+    except Exception as e:
+        assert str(e) == "Request body cannot be empty"
+
+def test_add_employee_without_token(): # Тестирование создания сотрудника без токена:
+    name = "Nick"
+    descr = "test"
+    company = api.create_company(name, descr)
+    new_id = company["id"]
+    
+    try:
+        api.add_new_employee(new_id, "NickPlotnikov", "B", token=None)
+    except Exception as e:
+        assert str(e) == "Token is required"
 
 def test_change_employee_info():
     name = "Nick"
