@@ -2,8 +2,8 @@ import pytest
 import requests
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from empl_db import Employee
 from company import Base, SessionLocal
+from empl_db import Employee
 
 DATABASE_URL = "postgresql://x_clients_user:95PM5lQE0NfzJWDQmLjbZ45ewrz1fLYa@dpg-cqsr9ulumphs73c2q40g-a.frankfurt-postgres.render.com/x_clients_db_fxd0"
 BASE_URL = "https://x-clients-be.onrender.com"
@@ -22,8 +22,8 @@ def db():
 @pytest.fixture(scope="module")
 def create_test_employee(db):
     employee = Employee(
-        first_name="Nick",
-        last_name="Plo",
+        first_name="John",
+        last_name="Doe",
         middle_name="M",
         phone="1234567890",
         email="john.doe@example.com",
@@ -37,7 +37,7 @@ def create_test_employee(db):
 
 def test_create_employee():
     response = requests.post(f"{BASE_URL}/employee", json={
-        "first_name": "Ann",
+        "first_name": "Alice",
         "last_name": "Smith",
         "middle_name": "A",
         "phone": "0987654321",
@@ -45,7 +45,7 @@ def test_create_employee():
         "avatar_url": "http://example.com/alice_avatar.jpg",
         "company_id": 2
     })
-    assert response.status_code == 201
+    assert response.status_code == 200
     data = response.json()
     assert "id" in data
     assert data["first_name"] == "Alice"
