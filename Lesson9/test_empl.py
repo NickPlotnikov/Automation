@@ -22,8 +22,8 @@ def db():
 @pytest.fixture(scope="module")
 def create_test_employee(db):
     employee = Employee(
-        first_name="John",
-        last_name="Doe",
+        first_name="Рядовой",
+        last_name="Раян",
         middle_name="M",
         phone="1234567890",
         email="john.doe@example.com",
@@ -37,19 +37,19 @@ def create_test_employee(db):
 
 def test_create_employee():
     response = requests.post(f"{BASE_URL}/employee", json={
-        "first_name": "Alice",
-        "last_name": "Smith",
+        "first_name": "Дженифер",
+        "last_name": "Лопез",
         "middle_name": "A",
         "phone": "0987654321",
-        "email": "alice.smith@example.com",
-        "avatar_url": "http://example.com/alice_avatar.jpg",
+        "email": "j.looo@example.com",
+        "avatar_url": "http://example.com/jlooo_avatar.jpg",
         "company_id": 2
     })
     assert response.status_code == 200
     data = response.json()
     assert "id" in data
-    assert data["first_name"] == "Alice"
-    assert data["last_name"] == "Smith"
+    assert data["first_name"] == "Дженифер"
+    assert data["last_name"] == "Лопез"
 
 def test_read_employee(create_test_employee):
     employee_id = create_test_employee.id
