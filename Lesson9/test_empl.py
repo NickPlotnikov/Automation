@@ -22,8 +22,8 @@ def db():
 @pytest.fixture(scope="module")
 def create_test_employee(db):
     employee = Employee(
-        first_name="John",
-        last_name="Doe",
+        first_name="Nick",
+        last_name="Plo",
         middle_name="M",
         phone="1234567890",
         email="john.doe@example.com",
@@ -37,7 +37,7 @@ def create_test_employee(db):
 
 def test_create_employee():
     response = requests.post(f"{BASE_URL}/employee", json={
-        "first_name": "Alice",
+        "first_name": "Ann",
         "last_name": "Smith",
         "middle_name": "A",
         "phone": "0987654321",
