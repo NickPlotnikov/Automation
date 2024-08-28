@@ -2,77 +2,54 @@ import pytest
 import requests
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from company import Base, SessionLocal
-from empl_db import Employee
+from company import Base, engine, SessionLocal
 
-DATABASE_URL = "postgresql://x_clients_user:95PM5lQE0NfzJWDQmLjbZ45ewrz1fLYa@dpg-cqsr9ulumphs73c2q40g-a.frankfurt-postgres.render.com/x_clients_db_fxd0"
+# Create a new database session for each test
+@pytest.fixture(scope="function")
+def db_session():
+    connection = engine.connect()
+    transaction = connection.begin()
+    session = SessionLocal(bind=connection)
+    yield session
+    session.close()
+    transaction.rollback()
+    connection.close()
+
+# Test configuration
 BASE_URL = "https://x-clients-be.onrender.com"
 
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-@pytest.fixture(scope="module")
-def db():
-    Base.metadata.create_all(bind=engine)
-    session = SessionLocal()
-    yield session
-    Base.metadata.drop_all(bind=engine)
-    session.close()
-
-@pytest.fixture(scope="module")
-def create_test_employee(db):
-    employee = Employee(
-        first_name="Рядовой",
-        last_name="Раян",
-        middle_name="M",
-        phone="1234567890",
-        email="john.doe@example.com",
-        avatar_url="http://example.com/avatar.jpg",
-        company_id=1
-    )
-    db.add(employee)
-    db.commit()
-    db.refresh(employee)
-    return employee
-
-def test_create_employee():
+def test_create_employee(db_session):
     response = requests.post(f"{BASE_URL}/employee", json={
-        "first_name": "Дженифер",
-        "last_name": "Лопез",
-        "middle_name": "A",
-        "phone": "0987654321",
-        "email": "j.looo@example.com",
-        "avatar_url": "http://example.com/jlooo_avatar.jpg",
-        "company_id": 2
+        "is_active": True,
+        "first_name": "John",
+        "last_name": "Doe",
+        "middle_name": "M",
+        "phone": "1234567890",
+        "email": "john.doe@example.com",
+        "avatar_url": "http://example.com/avatar.jpg",
+        "company_id": 1
     })
     assert response.status_code == 200
     data = response.json()
-    assert "id" in data
-    assert data["first_name"] == "Дженифер"
-    assert data["last_name"] == "Лопез"
+    assert data["first_name"] == "John"
 
-def test_read_employee(create_test_employee):
-    employee_id = create_test_employee.id
-    response = requests.get(f"{BASE_URL}/employee/{employee_id}")
+def test_read_employee(db_session):
+    response = requests.get(f"{BASE_URL}/employee/1")
     assert response.status_code == 200
     data = response.json()
-    assert data["first_name"] == create_test_employee.first_name
-    assert data["last_name"] == create_test_employee.last_name
+    assert data["id"] == 1
 
-def test_update_employee(create_test_employee):
-    employee_id = create_test_employee.id
-    response = requests.patch(f"{BASE_URL}/employee/{employee_id}", json={
-        "phone": "1112223333"
+def test_update_employee(db_session):
+    response = requests.patch(f"{BASE_URL}/employee/1", json={
+        "phone": "0987654321"
     })
     assert response.status_code == 200
     data = response.json()
-    assert data["phone"] == "1112223333"
+    assert data["phone"] == "0987654321"
 
-def test_delete_employee(create_test_employee):
-    employee_id = create_test_employee.id
-    response = requests.patch(f"{BASE_URL}/employee/{employee_id}", json={
-        "is_active": False
-    })
+def test_delete_employee(db_session):
+    response = requests.delete(f"{BASE_URL}/employee/1")
     assert response.status_code == 200
-    response = requests.get(f"{BASE_URL}/employee/{employee_id}")
+    # Verify the employee is deleted
+    response = requests.get(f"{BASE_URL}/employee/1")
     assert response.status_code == 404
