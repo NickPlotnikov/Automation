@@ -1,24 +1,12 @@
 import pytest
 import requests
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from company import Base, engine, SessionLocal
 
-# Create a new database session for each test
-@pytest.fixture(scope="function")
-def db_session():
-    connection = engine.connect()
-    transaction = connection.begin()
-    session = SessionLocal(bind=connection)
-    yield session
-    session.close()
-    transaction.rollback()
-    connection.close()
-
-# Test configuration
 BASE_URL = "https://x-clients-be.onrender.com"
 
-def test_create_employee(db_session):
+# Fixture to set up and tear down the database state
+@pytest.fixture(scope="function")
+def setup_db():
+    # Create a new employee to be used in tests
     response = requests.post(f"{BASE_URL}/employee", json={
         "is_active": True,
         "first_name": "John",
@@ -29,27 +17,45 @@ def test_create_employee(db_session):
         "avatar_url": "http://example.com/avatar.jpg",
         "company_id": 1
     })
-    assert response.status_code == 200
-    data = response.json()
-    assert data["first_name"] == "John"
+    employee_id = response.json().get("id")
+    yield employee_id
+    # Clean up after tests
+    requests.delete(f"{BASE_URL}/employee/{employee_id}")
 
-def test_read_employee(db_session):
-    response = requests.get(f"{BASE_URL}/employee/1")
-    assert response.status_code == 200
-    data = response.json()
-    assert data["id"] == 1
-
-def test_update_employee(db_session):
-    response = requests.patch(f"{BASE_URL}/employee/1", json={
-        "phone": "0987654321"
+def test_create_employee():
+    response = requests.post(f"{BASE_URL}/employee", json={
+        "is_active": True,
+        "first_name": "Jane",
+        "last_name": "Smith",
+        "middle_name": "A",
+        "phone": "0987654321",
+        "email": "jane.smith@example.com",
+        "avatar_url": "http://example.com/avatar2.jpg",
+        "company_id": 1
     })
     assert response.status_code == 200
     data = response.json()
-    assert data["phone"] == "0987654321"
+    assert data["first_name"] == "Jane"
 
-def test_delete_employee(db_session):
-    response = requests.delete(f"{BASE_URL}/employee/1")
+def test_read_employee(setup_db):
+    employee_id = setup_db
+    response = requests.get(f"{BASE_URL}/employee/{employee_id}")
     assert response.status_code == 200
-    # Verify the employee is deleted
-    response = requests.get(f"{BASE_URL}/employee/1")
+    data = response.json()
+    assert data["id"] == employee_id
+
+def test_update_employee(setup_db):
+    employee_id = setup_db
+    response = requests.patch(f"{BASE_URL}/employee/{employee_id}", json={
+        "phone": "1122334455"
+    })
+    assert response.status_code == 200
+    data = response.json()
+    assert data["phone"] == "1122334455"
+
+def test_delete_employee(setup_db):
+    employee_id = setup_db
+    response = requests.delete(f"{BASE_URL}/employee/{employee_id}")
+    assert response.status_code == 200
+    response = requests.get(f"{BASE_URL}/employee/{employee_id}")
     assert response.status_code == 404

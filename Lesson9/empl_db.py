@@ -1,25 +1,22 @@
-from sqlalchemy import Column, Integer, String, Boolean, TIMESTAMP, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Boolean, TIMESTAMP
+from sqlalchemy.sql import func
 from company import Base
 from pydantic import BaseModel
-from datetime import datetime
 
 class Employee(Base):
     __tablename__ = 'employee'
     
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     is_active = Column(Boolean, default=True)
-    create_timestamp = Column(TIMESTAMP, server_default='now()')
-    change_timestamp = Column(TIMESTAMP, server_default='now()', onupdate='now()')
+    create_timestamp = Column(TIMESTAMP, server_default=func.now())
+    change_timestamp = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
     first_name = Column(String(20))
     last_name = Column(String(20))
     middle_name = Column(String(20))
     phone = Column(String(15))
     email = Column(String(256))
     avatar_url = Column(String(1024))
-    company_id = Column(Integer, ForeignKey('company.id'))
-
-    company = relationship("Company")
+    company_id = Column(Integer)
 
 class EmployeeCreate(BaseModel):
     is_active: bool
