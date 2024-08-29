@@ -1,61 +1,78 @@
-import pytest
-import requests
+from empl_api import ApiEmpl
+from company import Company
+from empl_db import DbEmployee
 
-BASE_URL = "https://x-clients-be.onrender.com"
+db = DbEmployee("postgresql://x_clients_user:95PM5lQE0NfzJWDQmLjbZ45ewrz1fLYa@dpg-cqsr9ulumphs73c2q40g-a.frankfurt-postgres.render.com/x_clients_db_fxd0")
 
-# Fixture to set up and tear down the database state
-@pytest.fixture(scope="function")
-def setup_db():
-    # Create a new employee to be used in tests
-    response = requests.post(f"{BASE_URL}/employee", json={
-        "is_active": True,
-        "first_name": "John",
-        "last_name": "Doe",
-        "middle_name": "M",
-        "phone": "1234567890",
-        "email": "john.doe@example.com",
-        "avatar_url": "http://example.com/avatar.jpg",
-        "company_id": 1
-    })
-    employee_id = response.json().get("id")
-    yield employee_id
-    # Clean up after tests
-    requests.delete(f"{BASE_URL}/employee/{employee_id}")
+company = Company("https://x-clients-be.onrender.com")
+
+param_id = "?company=" + str(company.get_id_company())
+
+company_id = company.get_id_company()
+
+api = ApiEmpl("https://x-clients-be.onrender.com")
+
+body = {
+      "id": 1010108711,
+      "firstName": "string",
+      "lastName": "string",
+      "middleName": "string",
+      "companyId": company_id,
+      "email": "string@bl.yu",
+      "url": "string",
+      "phone": "string",
+      "birthdate": "2023-08-14T11:02:45.622Z",
+      "isActive": "true"
+  }
+
+
+def test_get_list_employee2():
+    api_result = api.get_list_employee2(param_id)
+    api_result = api_result.json()
+    db_result = db.get_list_employee(company_id)
+    assert len(api_result) == len(db_result)
+
+
+def test_add_employee2():
+    db_result = db.get_list_employee(company_id)
+    api.add_new_employee2(body)
+    api_response = api.get_list_employee2(param_id)
+    api_response = api_response.json()
+    assert len(api_response)-len(db_result) == 1
+
+
+def test_get_new_employee2():
+    resp = api.get_list_employee2(param_id)
+    api_new_employee = resp.json()[-1]['id']
+    db_new_employee = db.get_id_new_employee()
+    assert api_new_employee == db_new_employee
+
 
 def test_create_employee():
-    response = requests.post(f"{BASE_URL}/employee", json={
-        "is_active": True,
-        "first_name": "Jane",
-        "last_name": "Smith",
-        "middle_name": "A",
-        "phone": "0987654321",
-        "email": "jane.smith@example.com",
-        "avatar_url": "http://example.com/avatar2.jpg",
-        "company_id": 1
-    })
-    assert response.status_code == 200
-    data = response.json()
-    assert data["first_name"] == "Jane"
+    db_result = db.get_list_employee(company_id)
+    db.add_new_employee("Николай", "Плотников", "89180462317", True, company_id)
+    data_employee = api.get_new_employee2(db.get_id_new_employee())
+    data_employee = data_employee.json()
+    assert data_employee["firstName"] == "Николай"
+    assert data_employee["lastName"] == "Плотников"
+    assert data_employee["phone"] == "89180462317"
+    assert data_employee["isActive"] == True
+    assert data_employee["companyId"] == company_id
+    id = db.get_id_new_employee()
+    db.delete(id)
 
-def test_read_employee(setup_db):
-    employee_id = setup_db
-    response = requests.get(f"{BASE_URL}/employee/{employee_id}")
-    assert response.status_code == 200
-    data = response.json()
-    assert data["id"] == employee_id
 
-def test_update_employee(setup_db):
-    employee_id = setup_db
-    response = requests.patch(f"{BASE_URL}/employee/{employee_id}", json={
-        "phone": "1122334455"
-    })
-    assert response.status_code == 200
-    data = response.json()
-    assert data["phone"] == "1122334455"
 
-def test_delete_employee(setup_db):
-    employee_id = setup_db
-    response = requests.delete(f"{BASE_URL}/employee/{employee_id}")
-    assert response.status_code == 200
-    response = requests.get(f"{BASE_URL}/employee/{employee_id}")
-    assert response.status_code == 404
+def test_edit_employee():
+    db.add_new_employee("Николай", "Плотников", "89180462317", True, company_id)
+    id = db.get_id_new_employee()
+    db.edit_employee("Эдди", "Мерфин", "89180463434", True, company_id, id)
+    data_employee = api.get_new_employee2(id)
+    data_employee = data_employee.json()
+    assert data_employee["firstName"] == "Эдди"
+    assert data_employee["lastName"] == "Мерфин"
+    assert data_employee["phone"] == "89180463434"
+    assert data_employee["isActive"] == True
+    assert data_employee["companyId"] == company_id
+    id = db.get_id_new_employee()
+    db.delete(id)

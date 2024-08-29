@@ -1,36 +1,38 @@
-from fastapi import FastAPI, HTTPException, Depends
-from sqlalchemy.orm import Session
-from company import get_db
-from empl_db import Employee, EmployeeCreate, EmployeeUpdate
+import requests
 
-app = FastAPI()
 
-@app.get("/employee")
-def read_employees(db: Session = Depends(get_db)):
-    return db.query(Employee).all()
+class ApiEmpl:
 
-@app.post("/employee")
-def create_employee(employee: EmployeeCreate, db: Session = Depends(get_db)):
-    db_employee = Employee(**employee.dict())
-    db.add(db_employee)
-    db.commit()
-    db.refresh(db_employee)
-    return db_employee
+    def __init__(self, url) -> None:
+        self.url = url
 
-@app.get("/employee/{id}")
-def read_employee(id: int, db: Session = Depends(get_db)):
-    employee = db.query(Employee).filter(Employee.id == id).first()
-    if employee is None:
-        raise HTTPException(status_code=404, detail="Employee not found")
-    return employee
+# Авторизация
+    def auth2(self, login="leonardo", password="leads"):
+        body = {
+          "username": login,
+          "password": password
+        }
+        response = requests.post(self.url + '/auth/login', json=body)
+        return response.json()["userToken"]
 
-@app.patch("/employee/{id}")
-def update_employee(id: int, employee: EmployeeUpdate, db: Session = Depends(get_db)):
-    db_employee = db.query(Employee).filter(Employee.id == id).first()
-    if db_employee is None:
-        raise HTTPException(status_code=404, detail="Employee not found")
-    for key, value in employee.dict(exclude_unset=True).items():
-        setattr(db_employee, key, value)
-    db.commit()
-    db.refresh(db_employee)
-    return db_employee
+# Получить список сотрудников компании
+    def get_list_employee2(self, params=None):
+        response = requests.get(self.url + '/employee' + params)
+        return response
+
+# Добавить нового сотрудника
+    def add_new_employee2(self, body):
+        headers = {'x-client-token': self.auth2()}
+        response = requests.post(self.url + '/employee/', headers=headers, json=body)
+        return response
+
+# Получить сотрудника по id
+    def get_new_employee2(self, id):
+        response = requests.get(self.url + '/employee/' + str(id))
+        return response
+
+# Изменить данные о новом сотруднике
+    def change_new_employee2(self, id, new_body):
+        headers = {'x-client-token': self.auth2()}
+        response = requests.patch(self.url + '/employee/' + str(id), headers=headers, json=new_body)
+        return response
